@@ -46,9 +46,20 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    //public Account Login(Account acount){
+    public Account login(Account account) throws CredentialsInvalidException{
+        if(!checkUsername(account.getUsername()) || !checkPassword(account.getPassword())){
+            throw new CredentialsInvalidException();
+        }
+        Optional<Account> optionalAccount = accountRepository.findByUsername(account.getUsername());
 
-    //}
+        if(optionalAccount.isPresent()){
+            Account dbEntry = optionalAccount.get();
+            if(account.getPassword().equals(dbEntry.getPassword())){
+                return dbEntry;
+            }
+        }
+        throw new CredentialsInvalidException();
+    }
 
     public AccountRepository getAccountRepo(){
         return this.accountRepository;

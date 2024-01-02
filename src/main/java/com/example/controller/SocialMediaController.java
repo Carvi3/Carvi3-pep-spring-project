@@ -1,11 +1,9 @@
 package com.example.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
 import com.example.exception.*;
@@ -21,6 +19,13 @@ import com.example.service.AccountService;
 @RestController
 public class SocialMediaController {
     
+    private AccountService accountService;
+
+    @Autowired
+    public SocialMediaController(AccountService accountService){
+        this.accountService = accountService;
+    }
+
     @GetMapping("test/{account_id}")
     public String testMethod(@PathVariable int account_id){
         return "Henlo";
@@ -29,29 +34,35 @@ public class SocialMediaController {
     @PostMapping("register")
     public ResponseEntity<Account> register(@RequestBody Account account){
         //AccountService accountService = app.getBean(AccountService.class); //Use an Init method instead
-        AccountService accountService = new AccountService();
+        //AccountService accountService = new AccountService();
         //Account account = new Account(username,password);//Do we get a bean instance of Account here instead of inputting parameters?
         
         try{
             account = accountService.register(account);
         }catch(CredentialsInvalidException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(account);
+            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    //.body(account);
+            throw new CredentialsInvalidException("Username doesn't checkout");
         }catch(DuplicateUsernameException e){
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(account);
         }
         
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
+        return ResponseEntity.status(HttpStatus.OK)
             .body(account);
     }
 
-    //@PostMapping("login")
-    //@ResponseStatus(HttpStatus.NO_CONTEXT)
-    //public Account login(@RequestParam String username, @RequestParam String password){
-        
 
-    //}
+    /*@PostMapping("login")
+    @ResponseStatus(HttpStatus.OK)
+    public Account login(@RequestBody Account account){
+        try{
+            accountService.login(account);
+        }catch(CredentialsInvalidException e)(
+
+        )
+        
+    }*/
     
     @ExceptionHandler(CredentialsInvalidException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
