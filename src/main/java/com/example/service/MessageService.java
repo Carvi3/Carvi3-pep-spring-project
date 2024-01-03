@@ -78,8 +78,9 @@ public class MessageService {
         if(messageRequirement(newText)){
             Message message = messageRepository.getById(message_id);
             message.setMessage_text(newText);
-            messageRepository.save(message);
-            return 1; //TODO: Make sure to find out how to get affected rows from .save query
+            return messageRepository.updateMessage(newText, message_id);
+            
+            //return 1; //TODO: Make sure to find out how to get affected rows from .save query
         }
         throw new NotSuccessfulException("Message_text Requirement not met");
     }

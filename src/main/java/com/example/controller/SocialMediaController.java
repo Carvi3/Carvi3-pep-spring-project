@@ -56,7 +56,7 @@ public class SocialMediaController {
         return accountService.login(account);
     }
     
-    @GetMapping("accounts/{account_id}/messages")
+    @GetMapping("accounts/{account_id}/messages")//http://localhost:8080/accounts/{account_id}/messages
     @ResponseStatus(HttpStatus.OK)
     public List<Message> getAllMessagesFromAccount_id(@PathVariable int account_id){
         return messageService.getAllMessagesByAccountId(account_id);

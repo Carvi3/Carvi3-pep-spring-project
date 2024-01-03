@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import com.example.entity.Account;
 
 public interface AccountRepository extends JpaRepository<Account,Integer>{
+    
     @Query("FROM Account WHERE username=:username")
     Optional<Account> findByUsername(@Param("username") String username);
 }
