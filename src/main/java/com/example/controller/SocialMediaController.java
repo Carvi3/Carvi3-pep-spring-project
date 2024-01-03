@@ -1,13 +1,17 @@
 package com.example.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
 import com.example.exception.*;
 import com.example.service.AccountService;
+import com.example.service.MessageService;
 
 //import com.example.exception.CredentialsInvalidException;
 
@@ -22,10 +26,12 @@ import com.example.service.AccountService;
 public class SocialMediaController {
     
     private AccountService accountService;
+    private MessageService messageService;
 
     @Autowired
-    public SocialMediaController(AccountService accountService){
+    public SocialMediaController(AccountService accountService, MessageService messageService){
         this.accountService = accountService;
+        this.messageService = messageService;
     }
 
     @GetMapping("test/{account_id}")
@@ -50,7 +56,12 @@ public class SocialMediaController {
         return accountService.login(account);
     }
     
-    
+    @GetMapping("accounts/{account_id}/messages")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Message> getAllMessagesFromAccount_id(@PathVariable int account_id){
+        return messageService.getAllMessagesByAccountId(account_id);
+    }
+
 
 
     //Happens for Registration, Create Message, Update Message
