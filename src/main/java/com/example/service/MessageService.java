@@ -7,6 +7,8 @@ import java.util.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.entity.Message;
 import com.example.exception.*;
@@ -71,6 +73,7 @@ public class MessageService {
         /*return queryList;*/
 
     //Update
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int updateTextById(int message_id, String newText) throws NotSuccessfulException{
         if(!messageRepository.existsById(message_id)){
             throw new NotSuccessfulException("Message_id not found");
@@ -79,8 +82,6 @@ public class MessageService {
             Message message = messageRepository.getById(message_id);
             message.setMessage_text(newText);
             return messageRepository.updateMessage(newText, message_id);
-            
-            //return 1; //TODO: Make sure to find out how to get affected rows from .save query
         }
         throw new NotSuccessfulException("Message_text Requirement not met");
     }

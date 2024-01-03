@@ -18,5 +18,4 @@ public interface MessageRepository extends JpaRepository<Message,Integer> {
     @Modifying
     @Query("UPDATE Message SET message_text = :message_textVar WHERE message_id = :message_idVar")
     int updateMessage(@Param("message_textVar") String message_textVar, @Param("message_idVar") int message_idVar);
-
 }
