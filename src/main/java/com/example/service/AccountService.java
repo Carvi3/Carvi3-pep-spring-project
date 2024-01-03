@@ -16,10 +16,10 @@ public class AccountService {
     
     private AccountRepository accountRepository;
 
-    public AccountService(){} //This shouldn't be called
+    public AccountService(){} //This shouldn't be called <-- Not needed
 
     @Autowired
-    public AccountService(AccountRepository accountRepository){ //Is this supposed to be used in my Controller class?
+    public AccountService(AccountRepository accountRepository){ //Good Practice
         this.accountRepository = accountRepository;
     }
 
@@ -31,13 +31,13 @@ public class AccountService {
     }
 
 
-    public Account register(Account account) throws CredentialsInvalidException, DuplicateUsernameException{
+    public Account register(Account account) throws NotSuccessfulException, DuplicateUsernameException{
         if(!checkUsername(account.getUsername()) || !checkPassword(account.getPassword())){
-            throw new CredentialsInvalidException();
+            throw new NotSuccessfulException("Credentials do not meet Minimum");
         }
         Optional<Account> optionalAccount = accountRepository.findByUsername(account.getUsername());
         if(optionalAccount.isPresent()){
-           throw new DuplicateUsernameException(); 
+           throw new DuplicateUsernameException("Duplicate Username Found"); 
         }
         
         /*if(accountRepo.findByUsername(account.getUsername()) != null){
@@ -46,19 +46,19 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public Account login(Account account) throws CredentialsInvalidException{
+    public Account login(Account account) throws CredentialsInvalidException, NotSuccessfulException{
         if(!checkUsername(account.getUsername()) || !checkPassword(account.getPassword())){
-            throw new CredentialsInvalidException();
+            throw new CredentialsInvalidException("Credentials do not meet Minimum");
         }
         Optional<Account> optionalAccount = accountRepository.findByUsername(account.getUsername());
 
         if(optionalAccount.isPresent()){
-            Account dbEntry = optionalAccount.get();
+            Account dbEntry = optionalAccount.get(); 
             if(account.getPassword().equals(dbEntry.getPassword())){
                 return dbEntry;
             }
         }
-        throw new CredentialsInvalidException();
+        throw new CredentialsInvalidException("Login Unsuccessful");
     }
 
     public AccountRepository getAccountRepo(){

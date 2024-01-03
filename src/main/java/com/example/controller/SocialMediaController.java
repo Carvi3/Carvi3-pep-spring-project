@@ -9,6 +9,8 @@ import com.example.entity.Account;
 import com.example.exception.*;
 import com.example.service.AccountService;
 
+//import com.example.exception.CredentialsInvalidException;
+
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
  * found in readme.md as well as the test cases. You be required to use the @GET/POST/PUT/DELETE/etc Mapping annotations
@@ -31,39 +33,33 @@ public class SocialMediaController {
         return "Henlo";
     }
 
-    @PostMapping("register")
-    public ResponseEntity<Account> register(@RequestBody Account account){
-        //AccountService accountService = app.getBean(AccountService.class); //Use an Init method instead
-        //AccountService accountService = new AccountService();
-        //Account account = new Account(username,password);//Do we get a bean instance of Account here instead of inputting parameters?
-        
-        try{
-            account = accountService.register(account);
-        }catch(CredentialsInvalidException e){
-            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    //.body(account);
-            throw new CredentialsInvalidException("Username doesn't checkout");
-        }catch(DuplicateUsernameException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(account);
-        }
-        
+    /*@PostMapping("register")
+    public ResponseEntity<Account> register(@RequestBody Account account) throws CredentialsInvalidException, DuplicateUsernameException{
         return ResponseEntity.status(HttpStatus.OK)
-            .body(account);
+            .body(accountService.register(account));
+    }*/
+    @PostMapping("register")
+    @ResponseStatus(HttpStatus.OK)
+    public Account register(@RequestBody Account account) throws NotSuccessfulException, DuplicateUsernameException{
+        return accountService.register(account);
+    }
+    
+    @PostMapping("login")
+    @ResponseStatus(HttpStatus.OK)
+    public Account login(@RequestBody Account account) throws CredentialsInvalidException, NotSuccessfulException{
+        return accountService.login(account);
+    }
+    
+    
+
+
+    //Happens for Registration, Create Message, Update Message
+    @ExceptionHandler(NotSuccessfulException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String notSuccessful(NotSuccessfulException e){
+        return e.getMessage();
     }
 
-
-    /*@PostMapping("login")
-    @ResponseStatus(HttpStatus.OK)
-    public Account login(@RequestBody Account account){
-        try{
-            accountService.login(account);
-        }catch(CredentialsInvalidException e)(
-
-        )
-        
-    }*/
-    
     @ExceptionHandler(CredentialsInvalidException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public String userInputInvalid(CredentialsInvalidException e){
@@ -75,4 +71,24 @@ public class SocialMediaController {
     public String duplicateUsername(DuplicateUsernameException e){
         return e.getMessage();
     }
+
+
+
+    /*@PostMapping("register")
+    public ResponseEntity<Account> register(@RequestBody Account account){
+        
+        
+        try{
+            account = accountService.register(account);
+        }catch(CredentialsInvalidException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(account);
+        }catch(DuplicateUsernameException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(account);
+        }
+        
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(account);
+    }*/
 }
