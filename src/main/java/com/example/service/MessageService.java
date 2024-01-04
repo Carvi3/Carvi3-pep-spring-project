@@ -88,11 +88,8 @@ public class MessageService {
 
 
     //Delete
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int deleteMessage(int message_id){
-        if(!messageRepository.existsById(message_id)){
-            return 0;
-        }
-        messageRepository.deleteById(message_id);
-        return 1;
+        return messageRepository.deleteMessage(message_id);
     }
 }

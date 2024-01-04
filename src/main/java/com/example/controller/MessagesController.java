@@ -67,10 +67,10 @@ public class MessagesController{
     }
     
     @RequestMapping(path = "{message_id}", method = RequestMethod.DELETE)
-    //@ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Integer> deleteMessage(@PathVariable int message_id){
         int affectedRows = messageService.deleteMessage(message_id);
-        if(affectedRows == 1){
+        if(affectedRows > 0){
             return ResponseEntity.status(HttpStatus.OK)
                 .body(affectedRows);
         }
